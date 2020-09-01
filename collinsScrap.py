@@ -4,7 +4,7 @@ import re
 
 query_url = "https://www.collinsdictionary.com/dictionary/english/"
 
-# str -> list[str]
+
 def query(word):
     req = Request(query_url+word.replace(" ", "-"), headers={'User-Agent': 'Mozilla/5.0'})
     html = urlopen(req)
@@ -24,7 +24,7 @@ def query(word):
 
     word = ""
     for char in html.geturl()[::-1]:
-        if (char!="/"): word += char
+        if char!="/": word += char
         else: break
     word = word[::-1].replace("-", " ")
     
@@ -39,35 +39,35 @@ def rmUnwanted(in_lst):
         if isInDict(s):
             lst[i] = "1. " + s
             lst[i+1] = lst[i+1].capitalize()
-        elif (s[:16]=="More Synonyms of"): boo = 0
-        elif (s[:21]=="  See full dictionary"): break
-        elif (s[:16]=="COBUILD Advanced"): break
-        elif (s[-24:]=="HarperCollins Publishers"): break
-        elif (s[:38]=="Webster’s New World College Dictionary"): break
+        elif s[:16]=="More Synonyms of": boo = 0
+        elif s[:21]=="  See full dictionary": break
+        elif s[:16]=="COBUILD Advanced": break
+        elif s[-24:]=="HarperCollins Publishers": break
+        elif s[:38]=="Webster’s New World College Dictionary": break
         elif unWanted(s): boo = 0
         else:
             for j in range(len(s)):
                 char = s[j]
-                if (char=="<" or char==">" or char=="{" or char=="}" or char=="=" or char=='"'):
+                if char=="<" or char==">" or char=="{" or char=="}" or char=="=" or char=='"':
                     boo = 0; break
-                elif (char=="]" and j+1!=len(s)):
+                elif char=="]" and j+1!=len(s):
                     out_lst.append(s[:j+1])
                     out_lst.append(s[j+1:])
                     boo = 0; break
-            if (boo):
+            if boo:
                 for j in range(len(s)):
                     char = s[j]
-                    if (char.isupper() and s[j-1].islower() and j!=0):
-                        if (isInDict(s[:j])): out_lst.append("1. " + s[:j])
+                    if char.isupper() and s[j-1].islower() and j!=0:
+                        if isInDict(s[:j]): out_lst.append("1. " + s[:j])
                         else: out_lst.append(s[:j])
                         out_lst.append(s[j:])
                         boo = 0; break
-                    elif (char.isdigit() and s[j-1].islower() and j!=0):
+                    elif char.isdigit() and s[j-1].islower() and j!=0:
                         out_lst.append(s[:j])
                         out_lst.append(s[j:])
                         boo = 0; break
 
-        if (boo): out_lst.append(lst[i])
+        if boo: out_lst.append(lst[i])
     out_lst[0] = "\n" + out_lst[0].upper()
     return out_lst
 
@@ -78,43 +78,43 @@ def str2lines(in_lst):
     for i in range(len(text)-2):
         if skip: skip = 0
         else:
-            if (text[i]=="|"):
+            if text[i]=="|":
                 prev2 = text[i-2]
                 prev1 = text[i-1]
                 next1 = text[i+1]
                 next2 = text[i+2]
-                if (next1.isdigit()):
+                if next1.isdigit():
                     idx += 1
                     lines.append("\n")
-                elif (prev1=="." or prev1=="!" or prev1=="?"):
-                    if (next1!=" "):
+                elif prev1=="." or prev1=="!" or prev1=="?":
+                    if next1!=" ":
                         idx += 1
                         lines.append("")
                     else:
-                        if (next2==" "): skip = 1
-                        elif (next2=="." or next2=="[" or next2.isupper()):
+                        if next2==" ": skip = 1
+                        elif next2=="." or next2=="[" or next2.isupper():
                             skip = 1
                             idx += 1
                             lines.append("")
-                elif (prev1=="]"):
-                    if (next1==" "): skip = 1
+                elif prev1=="]":
+                    if next1==" ": skip = 1
                     idx += 1
                     lines.append("")
-                elif (prev1.isalpha()):
-                    if (next1.isupper()):
+                elif prev1.isalpha():
+                    if next1.isupper():
                         idx += 1
                         lines.append("")
-                    elif (next1.isalpha()): lines[idx] += " "
-                elif (prev1!=" "):
-                    if (next1.isalpha()):
-                        if (prev1=="'" and prev2==" "): pass
+                    elif next1.isalpha(): lines[idx] += " "
+                elif prev1!=" ":
+                    if next1.isalpha():
+                        if prev1=="'" and prev2==" ": pass
                         else:
                             idx += 1
                             lines.append("")
-                    elif (next1.isdigit()):
+                    elif next1.isdigit():
                         idx += 1
                         lines.append("")
-                    elif (next1==" "):
+                    elif next1==" ":
                         idx += 1
                         lines.append("1.")
             else: lines[idx] += text[i]

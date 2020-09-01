@@ -16,7 +16,7 @@ if __name__ == "__main__":
     word = " ".join(args.vocab)
     try:
         word, ret = collinsScrap.query(word)
-        if (len(ret) == 0):
+        if len(ret) == 0:
             print(dc.txtStyle.bold + dc.txtStyle.red31 + "*** No results ***" + dc.txtStyle.reset)
         else: dc.printTxt(word, ret)
     except URLError:
