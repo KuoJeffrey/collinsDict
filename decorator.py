@@ -27,9 +27,9 @@ class txtStyle:
     cyan96          = "\033[96m"
     white           = "\033[97m"
 
-def printTxt(in_word, in_lst):
-    printTitle()
 
+
+def printTxt(in_word, in_lst):
     word = cmpModify(in_word, in_lst[0])
     print(txtStyle.bold + txtStyle.white + txtStyle.underline + in_lst[0][:len(word)] + txtStyle.reset, end="")
     print(txtStyle.gray90 + in_lst[0][len(word):] + txtStyle.reset)

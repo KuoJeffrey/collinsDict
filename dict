@@ -6,23 +6,31 @@ import collinsScrap
 import spellCheck
 import argparse
 
-parser = argparse.ArgumentParser(description="///### COLLINS DICTIONARY ###///")
-parser.add_argument("-v", "--version", action="version", version="v1.0")
-parser.add_argument("vocab", metavar="word(s)", type=str, nargs="+", help="vocab/phrase")
+
+VERSION = "v1.0"
+
+description = dc.txtStyle.bold + dc.txtStyle.white + "///### COLLINS DICTIONARY ###///" + dc.txtStyle.reset
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument("-v", "--version", action="version", version=VERSION)
+parser.add_argument("vocab", metavar="vocabulary", type=str, nargs="+", help="word/phrase")
+parser.add_argument("-d", "--debug", action="store_true", help="show inside contents for debugging")
 args = parser.parse_args()
+
+DEBUG = args.debug
 
 
 if __name__ == "__main__":
     word = " ".join(args.vocab)
+
+    dc.printTitle()
     try:
-        word, ret = collinsScrap.query(word)
-        if len(ret) == 0:
-            print(dc.txtStyle.bold + dc.txtStyle.red31 + "*** No results ***" + dc.txtStyle.reset)
-        else: dc.printTxt(word, ret)
+        typo = collinsScrap.query(word, DEBUG)
+        if typo:
+            print(dc.txtStyle.bold + dc.txtStyle.red31 + "********* No results *********" + dc.txtStyle.reset)
+
     except URLError:
-        print(dc.txtStyle.bold + dc.txtStyle.red31 + "*** URLError ***" + dc.txtStyle.reset)
+        print(dc.txtStyle.bold + dc.txtStyle.red31 + "********* URLError *********" + dc.txtStyle.reset)
         print(dc.txtStyle.red31 + "Please check your wifi connection" + dc.txtStyle.reset)
-    except IndexError:
-        pass
+
     except KeyboardInterrupt:
-        print(dc.txtStyle.bold + dc.txtStyle.red31 + "*** KeyboardInterrupt ***" + dc.txtStyle.reset)
+        print(dc.txtStyle.bold + dc.txtStyle.red31 + "********* KeyboardInterrupt *********" + dc.txtStyle.reset)
