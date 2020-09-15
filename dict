@@ -2,7 +2,7 @@
 
 from urllib.error import URLError
 import decorator as dc
-import collinsScrap
+import collinsScrape
 import spellCheck
 import argparse
 
@@ -17,6 +17,7 @@ parser.add_argument("-d", "--debug", action="store_true", help="show inside cont
 args = parser.parse_args()
 
 DEBUG = args.debug
+OPTIONS = {"r": "retype your word", "q": "quit"} # spell check options
 
 
 if __name__ == "__main__":
@@ -24,9 +25,14 @@ if __name__ == "__main__":
 
     dc.printTitle()
     try:
-        typo = collinsScrap.query(word, DEBUG)
-        if typo:
-            print(dc.txtStyle.bold + dc.txtStyle.red31 + "********* No results *********" + dc.txtStyle.reset)
+        typo = collinsScrape.query(word, DEBUG)
+        while typo:
+            word = spellCheck.suggest(word, OPTIONS, DEBUG)
+            if word=="q": break
+            elif word=="r": word = input("What's your word of interest:\n")
+            
+            typo = collinsScrape.query(word, DEBUG)
+            # print(dc.txtStyle.bold + dc.txtStyle.red31 + "********* No results *********" + dc.txtStyle.reset)
 
     except URLError:
         print(dc.txtStyle.bold + dc.txtStyle.red31 + "********* URLError *********" + dc.txtStyle.reset)

@@ -73,7 +73,7 @@ class Vocab:
     #     if cur.rsibling is not None: self.deleteTree(cur.rsibling)
     #     print("Delete", cur.content)
 
-    def find(self, node):
+    def find(self, in_cont):
         pass
 
     def __str__(self):

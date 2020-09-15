@@ -74,3 +74,52 @@ def printTitle():
             + "+--------------------------------+".center(termSize)
             + txtStyle.reset
     ); print(title)
+
+
+def printSuggestedWords(in_list):
+    termSize = shutil.get_terminal_size().columns
+    num = len(in_list)
+
+    for idx in range(num//2):
+        spaceNum = termSize//2 - len(in_list[idx]) - len(str(idx+1)) - 3
+        print("{}[{}] {}".format(txtStyle.gray37, idx+1, txtStyle.reset), end="")
+        print("{}{}{}".format(txtStyle.white, in_list[idx], txtStyle.reset), end="")
+        print(spaceNum*" ", end="")
+        print("{}[{}] {}".format(txtStyle.gray37, num//2+idx+1, txtStyle.reset), end="")
+        print("{}{}{}".format(txtStyle.white, in_list[num//2+idx], txtStyle.reset))
+
+def printOptions(in_dict):
+    print()
+    termSize = shutil.get_terminal_size().columns
+
+    idx = 0
+    for key in in_dict.keys():
+        spaceNum = termSize//2 - len(in_dict[key]) - len(key) - 3
+        print("{}[{}] {}".format(txtStyle.gray37, key, txtStyle.reset), end="")
+        print("{}{}{}".format(txtStyle.white, in_dict[key], txtStyle.reset), end="")
+        if idx%2 == 0:
+            print(spaceNum*" ", end="")
+            idx += 1
+    if idx%2 == 1: print()
+
+def printH1(in_str):
+    if type(in_str) is list:
+        for line in in_str:
+            print("{}{}{}{}".format(txtStyle.bold, txtStyle.cyan36, line, txtStyle.reset))
+    elif type(in_str) is str:
+        print("{}{}{}{}".format(txtStyle.bold, txtStyle.cyan36, in_str, txtStyle.reset))
+
+def printH2(in_str):
+    if type(in_str) is list:
+        for line in in_str:
+            print("{}{}{}{}".format(txtStyle.bold, txtStyle.gray37, line, txtStyle.reset))
+    elif type(in_str) is str:
+        print("{}{}{}{}".format(txtStyle.bold, txtStyle.gray37, in_str, txtStyle.reset))
+
+def printError(in_str):
+    print()
+    if type(in_str) is list:
+        for line in in_str:
+            print("{}{}{}".format(txtStyle.red91, line, txtStyle.reset))
+    elif type(in_str) is str:
+        print("{}{}{}".format(txtStyle.red91, in_str, txtStyle.reset))
