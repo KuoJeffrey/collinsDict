@@ -13,7 +13,7 @@ dict_ = "cbr" # used dictionary
 
 def query(word, dbug):
     global dict_
-
+    
     req = Request(query_url+word.replace(" ", "-"), headers={'User-Agent': 'Mozilla/5.0'})
     html = urlopen(req)
     soup = BeautifulSoup(html.read(), 'html.parser')
@@ -36,7 +36,6 @@ def query(word, dbug):
         for e in defs: print("definitions:", e)
         print("thesaurus:", thes)
         print("copyrights:", cpRght)
-
 
     v = Vocab(word)
     v.dict_ = dict_
@@ -94,7 +93,8 @@ def h2_entry(link, dbug):
     cB_h = link.find("div", class_="cB-h")
     title_container = cB_h.find("div", class_="title_container")
     h2_entry = title_container.find("h2", class_="h2_entry")
-    return "".join(rmChars(h2_entry, dbug))
+    orth = h2_entry.find("span", class_="orth")
+    return "".join(rmChars(orth, dbug))
 
 
 
@@ -142,7 +142,7 @@ def hom(link, dbug):
 
     # Part of Speech
     pos = link.find("span", class_="pos")
-    lbl = link.find_all("span", class_="lbl")
+    lbl = link.find_next_sibling("span", class_="lbl")
     if pos is not None:
         pos = "".join(rmChars(pos, dbug))
         if lbl is not None:

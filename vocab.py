@@ -66,12 +66,6 @@ class Vocab:
                 node.rsibling = None
             else: node.parent.rsibling = None
             node.parent = None
-        # self.deleteTree(node)
-
-    # def deleteTree(self, cur):
-    #     if cur.child is not None: self.deleteTree(cur.child)
-    #     if cur.rsibling is not None: self.deleteTree(cur.rsibling)
-    #     print("Delete", cur.content)
 
     def find(self, in_cont):
         pass
@@ -104,9 +98,13 @@ class Vocab:
         if cur is None: cur = self.root.child
 
         # Pre-order traversal
-        if cur.content=="None": pass
+        if cur.content=="None" or cur.content=="": pass
+        elif cur.content==self.root.content: dc.printH1(self.root.content.upper())
+        elif cur.content[0]=="(": dc.printH4(cur.content)
         elif cur.content=="cbr" or cur.content=="ced" or cur.content=="amr" or cur.content=="amp" or cur.content=="esp": pass
-        elif cur.content=="sense" or cur.content=="resense": print()
+        elif cur.content=="sense" or cur.content=="resense": pass
+        elif cur.content[0].isdigit(): print(); print(cur.content, end="")
+        elif cur.content[:8]=="Synonyms": dc.printH4(cur.content)
         else: print(cur.content)
         if cur.child is not None: self.printDict(cur.child)
         if cur.rsibling is not None: self.printDict(cur.rsibling)

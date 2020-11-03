@@ -116,6 +116,20 @@ def printH2(in_str):
     elif type(in_str) is str:
         print("{}{}{}{}".format(txtStyle.bold, txtStyle.gray37, in_str, txtStyle.reset))
 
+def printH3(in_str):
+    if type(in_str) is list:
+        for line in in_str:
+            print("{}{}{}".format(txtStyle.gray37, line, txtStyle.reset))
+    elif type(in_str) is str:
+        print("{}{}{}".format(txtStyle.gray37, in_str, txtStyle.reset))
+
+def printH4(in_str):
+    if type(in_str) is list:
+        for line in in_str:
+            print("{}{}{}".format(txtStyle.gray90, line, txtStyle.reset))
+    elif type(in_str) is str:
+        print("{}{}{}".format(txtStyle.gray90, in_str, txtStyle.reset))
+
 def printError(in_str):
     print()
     if type(in_str) is list:
