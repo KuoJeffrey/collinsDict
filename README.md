@@ -116,7 +116,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email
+Jeffrey Kuo - [@twitter_handle](https://twitter.com/valcreatue) - kuojeffrey@gmail.com
 
 Project Link: [Terminal Collins Dictionary](https://github.com/KuoJeffrey/collinsDict)
 
