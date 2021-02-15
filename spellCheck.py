@@ -6,7 +6,7 @@ import re
 
 close_words_url = "https://www.collinsdictionary.com/spellcheck/english/?q="
 
-def suggest(word, options, dbug):
+def suggest(word, options):
     req = Request(close_words_url+word.replace(" ", "-"), headers={'User-Agent': 'Mozilla/5.0'})
     html = urlopen(req)
     soup = BeautifulSoup(html.read(), 'html.parser')
@@ -17,9 +17,9 @@ def suggest(word, options, dbug):
     link2 = link.find("h2")
     link3 = link.find("ul", class_="columns2")
 
-    noResults = rmChars(link1, dbug)
-    didYouMean = rmChars(link2, dbug)
-    suggested = rmChars(link3, dbug)
+    noResults = rmChars(link1)
+    didYouMean = rmChars(link2)
+    suggested = rmChars(link3)
     dc.printH1(noResults)
     dc.printH2(didYouMean)
     dc.printSuggestedWords(suggested)

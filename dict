@@ -13,10 +13,8 @@ description = dc.txtStyle.bold + dc.txtStyle.white + "///### COLLINS DICTIONARY 
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument("-v", "--version", action="version", version=VERSION)
 parser.add_argument("vocab", metavar="vocabulary", type=str, nargs="+", help="word/phrase")
-parser.add_argument("-d", "--debug", action="store_true", help="show inside contents for debugging")
 args = parser.parse_args()
 
-DEBUG = args.debug
 OPTIONS = {"r": "retype your word", "q": "quit"} # spell check options
 
 
@@ -25,13 +23,13 @@ if __name__ == "__main__":
 
     dc.printTitle()
     try:
-        typo = collinsScrape.query(word, DEBUG)
+        typo = collinsScrape.query(word)
         while typo:
-            word = spellCheck.suggest(word, OPTIONS, DEBUG)
+            word = spellCheck.suggest(word, OPTIONS)
             if word=="q": break
             elif word=="r": word = input("What's your word of interest:\n")
             
-            typo = collinsScrape.query(word, DEBUG)
+            typo = collinsScrape.query(word)
             # print(dc.txtStyle.bold + dc.txtStyle.red31 + "********* No results *********" + dc.txtStyle.reset)
 
     except URLError:
