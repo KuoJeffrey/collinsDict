@@ -1,6 +1,6 @@
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
-from vocab import div, Vocab, MeaningsCBR
+from vocab import div, Vocab, MeaningsCBR, MeaningsCED
 import decorator as dc
 import copy
 import re
@@ -56,7 +56,27 @@ def query(word):
             # print("examples: {}".format(examples))
             # print("synonyms: {}".format(synonyms))
         elif dict_ == "ced":
-            ced(blocks[idx])
+            posNum, defNum, poss, firstLines, definitions, examples = ced(blocks[idx])
+            tmpList = []
+            for p in range(posNum):
+                for d in range(len(definitions[p])):
+                    tmp = MeaningsCED(word)
+                    if definitions[p][d] == []: pass
+                    else:
+                        if firstLines[p][d] == "":
+                            tmp.set_firstLine(definitions[p][d][0])
+                            if len(definitions[p][d]) > 1:
+                                tmp.set_sublines(definitions[p][d][1:])
+                        else:
+                            tmp.set_firstLine(firstLines[p][d])
+                            tmp.set_sublines(definitions[p][d])
+                        tmp.set_dictNum()
+                        tmp.set_pos(poss[p])
+                        tmp.set_examples(examples[p][d])
+                        tmpList.append(tmp)
+            tmp.reset_defNum()
+            dictList.append(tmpList)
+
         elif dict_ == "american":
             web(blocks[idx])
         elif dict_ == "dictionary american Penguin":
@@ -184,18 +204,26 @@ def cbr(link):
 
 def ced(link):
     link = link.find("div", class_="content definitions ced")
-    
+
     # Part of Speech
     gramGrps = link.find_all("span", class_="pos")
     poss = ["".join(rmChars(gramGrp)) for gramGrp in gramGrps]
 
+    lblss, def_ss, exampless = [], [], []
     homs = link.find_all("div", class_="hom")
     for hom in homs:
         first_sense = hom.find("div", class_="sense")
         senses = [first_sense] + first_sense.find_next_siblings("div", class_="sense")
-        def_s, lbls, examples = [], [], []
-
+        
+        lbls, def_s, examples = [], [], []
         for sense in senses:
+            # First line (lbls)
+            spans = sense.find_all("span", class_="lbl")
+            if spans == []:
+                lbls.append("")
+            else:
+                lbls.append(" ".join(["".join(rmChars(span))[1:] for span in spans]))
+
             # Definitions
             def_divs = sense.find_all("div", class_="def")
             if def_divs == []:
@@ -203,23 +231,24 @@ def ced(link):
             else:
                 def_s.append(["".join(rmChars(def_div)) for def_div in def_divs])
             
-            # Lbls
-            spans = sense.find_all("span", class_="lbl")
-            if spans == []:
-                lbls.append([])
-            else:
-                lbls.append(["".join(rmChars(span))[1:] for span in spans])
-            
             # Examples
             quotes = sense.find_all("div", class_="type-example")
             if quotes == []:
                 examples.append([])
             else:
                 examples.append(["".join(rmChars(quote))[1:] for quote in quotes])
+        
+        def_ss.append(def_s)
+        lblss.append(lbls)
+        exampless.append(examples)
+
+    senseLen = 0
+    for lbls in lblss:
+        senseLen += len(lbls)
+    
+    return len(poss), senseLen, poss, lblss, def_ss, exampless
+    
             
-        for example in examples:
-            print(example)
-        print()
         
 
 
