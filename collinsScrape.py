@@ -32,6 +32,14 @@ def query(word):
     for dict_ in dict_s:
         if dict_ == "cobuild br":
             defNum, poss, posPuncts, definitions, examples, synonyms = cbr(blocks[idx])
+            # # Debug # #
+            # print("defNum: {}".format(defNum))
+            # print("poss: {}".format(poss))
+            # print("posPuncts: {}".format(posPuncts))
+            # print("definitions: {}".format(definitions))
+            # print("examples: {}".format(examples))
+            # print("synonyms: {}".format(synonyms))
+
             tmpList = []
             for i in range(defNum):
                 tmp = MeaningsCBR(word)
@@ -41,27 +49,34 @@ def query(word):
                 tmp.set_examples(examples[i])
                 tmp.set_synonyms(synonyms[i])
                 tmpList.append(tmp)
-            tmp.reset_defNum()
-            dictList.append(tmpList)
-            # for t in tmpList:
-            #     print(t.get_pos())
-            #     print(t.get_posPunct())
-            #     print(t.get_definition())
-            #     print(t.get_examples())
-            #     print(t.get_synonyms())
-            # print("defNum: {}".format(defNum))
-            # print("poss: {}".format(poss))
-            # print("posPuncts: {}".format(posPuncts))
-            # print("definitions: {}".format(definitions))
-            # print("examples: {}".format(examples))
-            # print("synonyms: {}".format(synonyms))
+                # # Debug # #
+                # print(tmp.get_pos())
+                # print(tmp.get_posPunct())
+                # print(tmp.get_definition())
+                # print(tmp.get_examples())
+                # print(tmp.get_synonyms())
+                # print()
+            try:
+                tmp.reset_defNum()
+                dictList.append(tmpList)
+            except UnboundLocalError:
+                print("Sorry, no contents available.......")
+
         elif dict_ == "ced":
             posNum, defNum, poss, firstLines, definitions, examples = ced(blocks[idx])
+            # # Debug # #
+            # print("posNum: {}".format(posNum))
+            # print("defNum: {}".format(defNum))
+            # print("poss: {}".format(poss))
+            # print("firstLines: {}".format(firstLines))
+            # print("definitions: {}".format(definitions))
+            # print("examples: {}".format(examples))
             tmpList = []
             for p in range(posNum):
                 for d in range(len(definitions[p])):
                     tmp = MeaningsCED(word)
-                    if definitions[p][d] == []: pass
+                    if definitions[p][d] == []:
+                        tmp.decrement_defNum()
                     else:
                         if firstLines[p][d] == "":
                             tmp.set_firstLine(definitions[p][d][0])
@@ -70,19 +85,29 @@ def query(word):
                         else:
                             tmp.set_firstLine(firstLines[p][d])
                             tmp.set_sublines(definitions[p][d])
-                        tmp.set_dictNum()
                         tmp.set_pos(poss[p])
                         tmp.set_examples(examples[p][d])
                         tmpList.append(tmp)
+                        # # Debug # #
+                        # print(tmp.get_defNum())
+                        # print(tmp.get_pos())
+                        # print(tmp.get_firstLine())
+                        # print(tmp.get_sublines())
+                        # print(tmp.get_examples())
+                        # print()
+            tmp.set_dictNum()
             tmp.reset_defNum()
             dictList.append(tmpList)
 
         elif dict_ == "american":
             web(blocks[idx])
+
         elif dict_ == "dictionary american Penguin":
             pen(blocks[idx])
+
         else:
             other(blocks[idx])
+
         idx += 1
 
 
@@ -157,7 +182,8 @@ def cB_def(link):
 
 def cbr(link):
     # Part of Speech & word's part of speech usage
-    gramGrps = link.find_all("span", class_="gramGrp")
+    homs = link.find_all("div", class_="hom")
+    gramGrps = [hom.find("span", class_="gramGrp") for hom in homs if hom.find("span", class_="gramGrp") is not None]
     poss, posPuncts = [], []
     for gramGrp in gramGrps:
         g = gramGrp.find("span", class_="pos")
@@ -176,7 +202,6 @@ def cbr(link):
     definitions = ["".join(rmChars(def_)) for def_ in def_s]
 
     # Examples
-    homs = link.find_all("div", class_="hom")[:defNum]
     quotes = [hom.find_all("span", class_="quote") for hom in homs]
     examples = []
     for quote in quotes:

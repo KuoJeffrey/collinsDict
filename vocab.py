@@ -117,7 +117,6 @@ class CED(Vocab2):
     cedNum = 1
     def __init__(self, word):
         Vocab2.__init__(self, word)
-        self.cedNum = 1
         self.dict_ = "CED"
         self.pos = ""
         self.firstLine = ""
@@ -161,6 +160,9 @@ class MeaningsCED(CED):
     
     def __str__(self):
         return "{}".format(self.get_defNum())
+    
+    def decrement_defNum(self):
+        MeaningsCED.meaningNum -= 1
     
     def reset_defNum(self):
         MeaningsCED.meaningNum = 1
