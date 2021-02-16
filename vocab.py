@@ -185,46 +185,48 @@ class MeaningsCED(CED):
 
 # Webster's Dictionary
 class WEB(Vocab2):
-    num = 1
+    webNum = 1
     def __init__(self, word):
         Vocab2.__init__(self, word)
-        self.webNum = WEB.num
-        WEB.num += 1
         self.dict_ = "WEB"
 
-    def get_dictNum(self):
-        return str(self.webNum).zfill(2)
-    
-    def get_dict(self):
-        return self.dict_
-    
     def __str__(self):
         return "Webster's Dictionary"
+
+    def reset_dictNum(self):
+        WEB.webNum = 1
     
-    def reset(self):
-        WEB.num, self.webNum = 1, 1
+    def set_dictNum(self):
+        WEB.webNum += 1
+
+    def get_dict(self):
+        return self.dict_
+
+    def get_dictNum(self):
+        return str(WEB.webNum).zfill(2)
 
 
 # Penguin English Dictionary
 class PEN(Vocab2):
-    num = 1
+    penNum = 1
     def __init__(self, word):
         Vocab2.__init__(self, word)
-        self.penNum = PEN.num
-        PEN.num += 1
         self.dict_ = "PEN"
+        
+    def __str__(self):
+        return "Penguin English Dictionary" 
+
+    def reset_dictNum(self):
+        PEN.penNum = 1
     
-    def get_dictNum(self):
-        return str(self.penNum).zfill(2)
-    
+    def set_dictNum(self):
+        PEN.penNum += 1
+
     def get_dict(self):
         return self.dict_
-    
-    def __str__(self):
-        return "Penguin English Dictionary"
 
-    def reset(self):
-        PEN.num, self.penNum = 1, 1
+    def get_dictNum(self):
+        return str(PEN.penNum).zfill(2)
 
 
 

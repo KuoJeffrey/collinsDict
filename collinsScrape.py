@@ -39,7 +39,6 @@ def query(word):
             # print("definitions: {}".format(definitions))
             # print("examples: {}".format(examples))
             # print("synonyms: {}".format(synonyms))
-
             tmpList = []
             for i in range(defNum):
                 tmp = MeaningsCBR(word)
@@ -60,7 +59,7 @@ def query(word):
                 tmp.reset_defNum()
                 dictList.append(tmpList)
             except UnboundLocalError:
-                print("Sorry, no contents available.......")
+                noContentError(word)
 
         elif dict_ == "ced":
             posNum, defNum, poss, firstLines, definitions, examples = ced(blocks[idx])
@@ -95,9 +94,12 @@ def query(word):
                         # print(tmp.get_sublines())
                         # print(tmp.get_examples())
                         # print()
-            tmp.set_dictNum()
-            tmp.reset_defNum()
-            dictList.append(tmpList)
+            try:
+                tmp.set_dictNum()
+                tmp.reset_defNum()
+                dictList.append(tmpList)
+            except UnboundLocalError:
+                noContentError(word)
 
         elif dict_ == "american":
             web(blocks[idx])
@@ -425,3 +427,7 @@ def printList(input):
             for i in input: print(i); print()
     except:
         print(dc.txtStyle.bold + dc.txtStyle.red31 + "Nontype" + dc.txtStyle.reset)
+
+
+def noContentError(word):
+    print('Sorry, no content is available for "{}"......'.format(word))
