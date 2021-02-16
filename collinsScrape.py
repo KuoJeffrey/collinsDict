@@ -1,6 +1,6 @@
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
-from vocab import Vocab, Vocab2, div
+from vocab import div, Vocab, MeaningsCBR
 import decorator as dc
 import copy
 import re
@@ -27,32 +27,55 @@ def query(word):
     pronuns = mini_h2(soup)
     dict_s = [cB_def(block) for block in blocks]
 
-    vocab = Vocab2(word)
+    idx = 0
+    dictList = []
     for dict_ in dict_s:
         if dict_ == "cobuild br":
-            pass
+            defNum, poss, posPuncts, definitions, examples, synonyms = cbr(blocks[idx])
+            tmpList = []
+            for i in range(defNum):
+                tmp = MeaningsCBR(word)
+                tmp.set_pos(poss[i])
+                tmp.set_posPunct(posPuncts[i])
+                tmp.set_definition(definitions[i])
+                tmp.set_examples(examples[i])
+                tmp.set_synonyms(synonyms[i])
+                tmpList.append(tmp)
+            tmp.reset_defNum()
+            dictList.append(tmpList)
+            # for t in tmpList:
+            #     print(t.get_pos())
+            #     print(t.get_posPunct())
+            #     print(t.get_definition())
+            #     print(t.get_examples())
+            #     print(t.get_synonyms())
+            # print("defNum: {}".format(defNum))
+            # print("poss: {}".format(poss))
+            # print("posPuncts: {}".format(posPuncts))
+            # print("definitions: {}".format(definitions))
+            # print("examples: {}".format(examples))
+            # print("synonyms: {}".format(synonyms))
         elif dict_ == "ced":
-            pass
+            ced(blocks[idx])
         elif dict_ == "american":
-            pass
+            web(blocks[idx])
         elif dict_ == "dictionary american Penguin":
-            pass
+            pen(blocks[idx])
         else:
-            pass
-
-
+            other(blocks[idx])
+        idx += 1
 
 
 
     defs, thes, cpRght = contDef(link)
     
     v = Vocab(word)
-    v.dict_ = dict_
+    v.dict_ = dict_s[0]
     v.cpRght = cpRght
 
     word = div(word, 1)
     pronun = div(pronuns[0], 1)
-    dict_ = div(dict_, 1)
+    dict_ = div(dict_s[0], 1)
     v.insert(v.root, word)
     v.insert(word, pronun)
     v.insert(pronun, dict_)
@@ -110,6 +133,105 @@ def mini_h2(link):
 def cB_def(link):
     dict_ = link.div.get("class")
     return  " ".join(dict_[2:])
+
+
+def cbr(link):
+    # Part of Speech & word's part of speech usage
+    gramGrps = link.find_all("span", class_="gramGrp")
+    poss, posPuncts = [], []
+    for gramGrp in gramGrps:
+        g = gramGrp.find("span", class_="pos")
+        if g is None:
+            poss.append("".join(rmChars(gramGrp)))
+            posPuncts.append("")
+        else:
+            poss.append("".join(rmChars(g)))
+            posPuncts.append("".join(rmChars(gramGrp.find("span", class_="lbl")))[1:])
+
+    # Number of Definitions
+    defNum = len(poss)
+
+    # Definitions
+    def_s = link.find_all("div", class_="def")
+    definitions = ["".join(rmChars(def_)) for def_ in def_s]
+
+    # Examples
+    homs = link.find_all("div", class_="hom")[:defNum]
+    quotes = [hom.find_all("span", class_="quote") for hom in homs]
+    examples = []
+    for quote in quotes:
+        if quote == []:
+            examples.append([""])
+        else:
+            examples.append(["".join(rmChars(q))[1:] for q in quote])
+
+    # Synonyms
+    thess = [hom.find_all(class_="form") for hom in homs]
+    synonyms = []
+    for thes in thess:
+        if thes == []:
+            synonyms.append([""])
+        else:
+            tmp = []
+            for t in thes:
+                try:
+                    tmp.append("".join(rmChars(t)))
+                except TypeError:
+                    tmp.append("")
+            synonyms.append(tmp)
+
+    return defNum, poss, posPuncts, definitions, examples, synonyms
+
+def ced(link):
+    link = link.find("div", class_="content definitions ced")
+    
+    # Part of Speech
+    gramGrps = link.find_all("span", class_="pos")
+    poss = ["".join(rmChars(gramGrp)) for gramGrp in gramGrps]
+
+    homs = link.find_all("div", class_="hom")
+    for hom in homs:
+        first_sense = hom.find("div", class_="sense")
+        senses = [first_sense] + first_sense.find_next_siblings("div", class_="sense")
+        def_s, lbls, examples = [], [], []
+
+        for sense in senses:
+            # Definitions
+            def_divs = sense.find_all("div", class_="def")
+            if def_divs == []:
+                def_s.append([])
+            else:
+                def_s.append(["".join(rmChars(def_div)) for def_div in def_divs])
+            
+            # Lbls
+            spans = sense.find_all("span", class_="lbl")
+            if spans == []:
+                lbls.append([])
+            else:
+                lbls.append(["".join(rmChars(span))[1:] for span in spans])
+            
+            # Examples
+            quotes = sense.find_all("div", class_="type-example")
+            if quotes == []:
+                examples.append([])
+            else:
+                examples.append(["".join(rmChars(quote))[1:] for quote in quotes])
+            
+        for example in examples:
+            print(example)
+        print()
+        
+
+
+def web(link):
+    pass
+
+def pen(link):
+    pass
+
+def other(link):
+    pass
+
 
 
 def contDef(link):

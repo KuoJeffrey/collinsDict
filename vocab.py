@@ -22,6 +22,7 @@ class div:
         return div(self.content, self.level)
     
 
+
 class Vocab2(object):
     def __init__(self, word):
         self.word = word
@@ -29,96 +30,156 @@ class Vocab2(object):
     def __str__(self):
         return self.word
 
+
 # Collins Cobuild Advanced Dictionary
 class CBR(Vocab2):
-    num = 1
+    cbrNum = 1
     def __init__(self, word):
         Vocab2.__init__(self, word)
-        self.cbrNum = CBR.num
-        CBR.num += 1
-        self.dict = "CBR"
-    
-    def get_dictNum(self):
-        return str(self.cbrNum).zfill(2)
+        self.dict_ = "CBR"
+        self.pos = ""
+        self.definition = ""
     
     def __str__(self):
         return "Collins Cobuild Advanced Dictionary"
     
-    def reset(self):
-        CBR.num, self.cbrNum = 1, 1
+    def reset_dictNum(self):
+        CBR.cbrNum = 1
 
+    def set_dictNum(self):
+        CBR.cbrNum += 1
+    
+    def set_pos(self, pos):
+        self.pos = pos
+    
+    def set_definition(self, definition):
+        self.definition = definition
+
+    def get_dictNum(self):
+        return str(CBR.cbrNum).zfill(2)
+    
+    def get_dict(self):
+        return self.dict_
+    
+    def get_pos(self):
+        return self.pos
+    
+    def get_definition(self):
+        return self.definition
+    
 class MeaningsCBR(CBR):
+    meaningNum = 1
     def __init__(self, word):
         CBR.__init__(self, word)
-        CBR.num -= 1
-        self.cbrNum -= 1
-        self.sense = ""
-        self.sensePunct = ""
-        self.definition = ""
+        self.num = MeaningsCBR.meaningNum
+        MeaningsCBR.meaningNum += 1
+        self.posPunct = ""
         self.punctuation = ""
         self.examples = []
-        self.exPuncts = []
-        self.synonyms = ""
+        self.synonyms = []
     
-    def set_sense(self, sense):
-        pass
+    def __str__(self):
+        return "{}".format(self.get_defNum())
 
-    def set_sensePunct(self, sensePunct):
-        pass
+    def reset_defNum(self):
+        MeaningsCBR.meaningNum = 1
 
-    def set_definition(self, definition):
-        pass
+    def set_posPunct(self, posPunct):
+        self.posPunct = posPunct
 
     def set_punctuation(self, punctuation):
-        pass
+        self.punctuation = punctuation
 
     def set_examples(self, examples):
-        pass
-
-    def set_exPuncts(self, exPuncts):
-        pass
+        self.examples = examples
 
     def set_synonyms(self, synonyms):
-        pass
+        self.synonyms = synonyms
 
-    def get_sense(self, sense):
-        return self.sense
+    def get_defNum(self):
+        return self.num
 
-    def get_sensePunct(self, sensePunct):
-        return self.sensePunct
+    def get_posPunct(self):
+        return self.posPunct
 
-    def get_definition(self, definition):
-        return self.definition
-
-    def get_punctuation(self, punctuation):
+    def get_punctuation(self):
         return self.punctuation
 
-    def get_examples(self, examples):
+    def get_examples(self,):
         return self.examples
 
-    def get_exPuncts(self, exPuncts):
-        return self.exPuncts
-
-    def get_synonyms(self, synonyms):
+    def get_synonyms(self):
         return self.synonyms
+
 
 # Collins English Dictionary
 class CED(Vocab2):
-    num = 1
+    cedNum = 1
     def __init__(self, word):
         Vocab2.__init__(self, word)
-        self.cedNum = CED.num
-        CED.num += 1
-        self.dict = "CED"
-    
-    def get_dictNum(self):
-        return str(self.cedNum).zfill(2)
+        self.cedNum = 1
+        self.dict_ = "CED"
+        self.pos = ""
+        self.firstLine = ""
     
     def __str__(self):
         return "Collins English Dictionary"
+    
+    def reset_dictNum(self):
+        CED.cedNum = 1
+    
+    def set_dictNum(self):
+        CED.cedNum += 1
 
-    def reset(self):
-        CED.num, self.cedNum = 1, 1
+    def set_pos(self, pos):
+        self.pos = pos
+    
+    def set_firstLine(self, firstLine):
+        self.firstLine = firstLine
+
+    def get_dict(self):
+        return self.dict_
+
+    def get_dictNum(self):
+        return str(CED.cedNum).zfill(2)
+    
+    def get_pos(self):
+        return self.pos
+    
+    def get_firstLine(self):
+        return self.firstLine
+
+class MeaningsCED(CED):
+    meaningNum = 1
+    def __init__(self, word):
+        CED.__init__(self, word)
+        self.num = MeaningsCED.meaningNum
+        MeaningsCED.meaningNum += 1
+        self.sublines = []
+        self.examples = []
+        # self.wordOrigin = ""
+    
+    def __str__(self):
+        return "{}".format(self.get_defNum())
+    
+    def reset_defNum(self):
+        MeaningsCED.meaningNum = 1
+    
+    def set_sublines(self, sublines):
+        self.sublines = sublines
+    
+    def set_examples(self, examples):
+        self.examples = examples
+
+    def get_defNum(self):
+        return self.num
+    
+    def get_sublines(self):
+        return self.sublines
+    
+    def get_examples(self):
+        return self.examples
+
 
 # Webster's Dictionary
 class WEB(Vocab2):
@@ -127,16 +188,20 @@ class WEB(Vocab2):
         Vocab2.__init__(self, word)
         self.webNum = WEB.num
         WEB.num += 1
-        self.dict = "WEB"
+        self.dict_ = "WEB"
 
     def get_dictNum(self):
         return str(self.webNum).zfill(2)
+    
+    def get_dict(self):
+        return self.dict_
     
     def __str__(self):
         return "Webster's Dictionary"
     
     def reset(self):
         WEB.num, self.webNum = 1, 1
+
 
 # Penguin English Dictionary
 class PEN(Vocab2):
@@ -145,10 +210,13 @@ class PEN(Vocab2):
         Vocab2.__init__(self, word)
         self.penNum = PEN.num
         PEN.num += 1
-        self.dict = "PEN"
+        self.dict_ = "PEN"
     
     def get_dictNum(self):
         return str(self.penNum).zfill(2)
+    
+    def get_dict(self):
+        return self.dict_
     
     def __str__(self):
         return "Penguin English Dictionary"
@@ -156,18 +224,11 @@ class PEN(Vocab2):
     def reset(self):
         PEN.num, self.penNum = 1, 1
 
-# a = Vocab2("qwerty")
-# b = CBR(a)
-# c = CBR(a)
-# print(b.get_dictNum())
-# print(c.get_dictNum())
 
-# b.reset()
 
-# d = Vocab2("as")
-# e = CBR(d)
-# f = MeaningsCBR(e)
-# print(e.get_dictNum())
+
+
+
 
 class Vocab(object):
     def __init__(self, in_word):
